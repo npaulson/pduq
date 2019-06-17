@@ -10,7 +10,6 @@ from pycalphad import equilibrium, variables as v
 from pycalphad.codegen.callables import build_callables
 from pycalphad.core.utils import instantiate_models
 from time import time
-from toolz.itertoolz import partition_all
 logging.basicConfig(filename='pduq.log', level=logging.DEBUG)
 
 
@@ -124,11 +123,11 @@ def eq_calc_samples(
 
     neq = params.shape[0]
 
-    max_size = np.int(np.floor(neq/20))
-    if max_size == 0:
-        max_size = 1
-
-    chunks = list(partition_all(max_size, range(neq)))
+    if neq < 20:
+        nch = neq
+    else:
+        nch = 20
+    chunks = [list(range(neq))[ii::nch] for ii in range(nch)]
 
     A = client.map(eq_calc_, chunks, **kwargs)
 

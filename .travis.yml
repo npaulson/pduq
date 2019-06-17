@@ -1,20 +1,39 @@
 language: python
-python:
-  - 3.6
-cache:
-  directories:
-    - $HOME/.cache/pip
-    - $HOME/.ccache  # https://github.com/travis-ci/travis-ci/issues/5853
+matrix:
+    include:
+        - python: 3.6
+        - name: "Python 3.7.1 on Xenial Linux"
+          python: 3.7           # this works for Linux but is ignored on macOS or Windows
+          dist: xenial          # required for Python >= 3.7
 
 install:
-  # Install this package and the packages listed in requirements.txt.
-  - pip install .
-  # Install extra requirements for running tests and building docs.
-  - pip install -r requirements-dev.txt
-
+  - sudo apt-get update
+  # The following copied from conda documentation.
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  # Useful for debugging any issues with conda
+  - conda info -a
+  - conda create -q -n pduq-env python=$TRAVIS_PYTHON_VERSION
+  - source activate pduq-env
+  - conda install -c conda-forge -c pycalphad 'pycalphad>=0.8' numpy scipy 'sympy>=1.2' six 'dask>=0.18' distributed 'tinydb>=3.8' scikit-learn emcee pyyaml cerberus bibtexparser sphinx sphinx_rtd_theme pytest nose mock twine seaborn
+before_script:
+  - source activate pduq-env
+  - pip install -e '.[dev]'
+  - echo '!!! Installed packages'
+  - conda list
+  - echo '!!! Local directory'
+  - ls -lh
+  # # Configure matplotlib to use the agg backend to prevent issues on py27
+  # - "echo 'backend : Agg' > matplotlibrc"
 script:
-  - coverage run -m pytest  # Run the tests and check for test coverage.
-  - coverage report -m  # Generate test coverage report.
-  - codecov  # Upload the report to codecov.
-  - flake8 --max-line-length=115  # Enforce code style (but relax line length limit a bit).
-  - make -C docs html  # Build the documentation.
+  - coverage run -m pytest
+  - coverage report =m
+  - code cov
+  - flake8
+  - make -C docs html
+  # - pytest -v --doctest-modules espei tests
+notifications:
+  email: False
