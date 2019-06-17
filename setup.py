@@ -55,6 +55,8 @@ setup(
             # When adding files here, remember to update MANIFEST.in as well,
             # or else they will not be included in the distribution on PyPI!
             # 'path/to/data_file',
+            'pduq/tests/trace.csv',
+            'pduq/tests/CU-MG_param_gen.tdb'
             ]
         },
     install_requires=requirements,
