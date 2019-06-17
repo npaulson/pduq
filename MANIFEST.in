@@ -14,3 +14,5 @@ include pduq/_version.py
 
 # If including data files in the package, add them like:
 # include path/to/data_file
+include pduq/tests/trace.csv
+include pduq/tests/CU-MG_param_gen.tdb
