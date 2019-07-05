@@ -19,6 +19,7 @@ install:
   - conda create -q -n pduq-env python=$TRAVIS_PYTHON_VERSION
   - source activate pduq-env
   - conda install -c conda-forge -c pycalphad 'pycalphad>=0.8' numpy scipy 'sympy>=1.2' six 'dask>=0.18' distributed 'tinydb>=3.8' scikit-learn emcee pyyaml cerberus bibtexparser sphinx sphinx_rtd_theme pytest nose mock twine seaborn
+flake8
 before_script:
   - source activate pduq-env
   - pip install -e '.[dev]'
@@ -29,11 +30,12 @@ before_script:
   # # Configure matplotlib to use the agg backend to prevent issues on py27
   # - "echo 'backend : Agg' > matplotlibrc"
 script:
-  - coverage run -m pytest
-  - coverage report =m
-  - code cov
+  # - coverage run -m pytest
+  # - coverage report =m
+  # - code cov
   - flake8
-  - make -C docs html
+  - pytest -m
+  # - make -C docs html
   # - pytest -v --doctest-modules espei tests
 notifications:
   email: False
