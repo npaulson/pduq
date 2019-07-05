@@ -10,12 +10,27 @@ from pycalphad import equilibrium, variables as v
 from pycalphad.codegen.callables import build_callables
 from pycalphad.core.utils import instantiate_models
 from time import time
-logging.basicConfig(filename='pduq.log', level=logging.DEBUG)
+logging.basicConfig(filename='pduq.log', level=logging.INFO)
 
 
-def eq_calc_(chunk, dbf, comps, phases, conds,
-             params, symbols_to_fit,
+def eq_calc_(dbf, comps, phases, conds,
+             paramA, symbols_to_fit,
              eq_callables=None):
+
+    param_dict = {param_name: param for param_name, param
+                  in zip(symbols_to_fit, paramA)}
+
+    parameters = OrderedDict(sorted(param_dict.items(), key=str))
+
+    eq_result = equilibrium(dbf, comps, phases, conds,
+                            parameters=parameters, callables=eq_callables)
+
+    return eq_result
+
+
+def eq_calc_chunk_(chunk, dbf, comps, phases, conds,
+                   params, symbols_to_fit,
+                   eq_callables=None):
     """
     Perform equilibrium calculations for the list of indices
     in chunk corresponding the the parameter sets in params
@@ -56,13 +71,18 @@ def eq_calc_(chunk, dbf, comps, phases, conds,
 
     for index in chunk:
 
-        param_dict = {param_name: param for param_name, param
-                      in zip(symbols_to_fit, np.squeeze(params[index, :]))}
+        paramA = np.squeeze(params[index, :])
 
-        parameters = OrderedDict(sorted(param_dict.items(), key=str))
+        # param_dict = {param_name: param for param_name, param
+        #               in zip(symbols_to_fit, np.squeeze(params[index, :]))}
 
-        eq_result_ = equilibrium(dbf, comps, phases, conds,
-                                 parameters=parameters, callables=eq_callables)
+        # parameters = OrderedDict(sorted(param_dict.items(), key=str))
+
+        # eq_result_ = equilibrium(dbf, comps, phases, conds,
+        #                          parameters=parameters, callables=eq_callables)
+
+        eq_result_ = eq_calc_(dbf, comps, phases, conds,
+                              paramA, symbols_to_fit, eq_callables)
 
         eq_result += [eq_result_]
 
@@ -129,7 +149,7 @@ def eq_calc_samples(
         nch = 20
     chunks = [list(range(neq))[ii::nch] for ii in range(nch)]
 
-    A = client.map(eq_calc_, chunks, **kwargs)
+    A = client.map(eq_calc_chunk_, chunks, **kwargs)
 
     eqL = client.gather(A)
 
