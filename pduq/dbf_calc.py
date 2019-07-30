@@ -94,7 +94,7 @@ def eq_calc_chunk_(chunk, dbf, comps, phases, conds,
 def eq_calc_samples(
         client, dbf, conds, params, comps=None, phases=None,
         savef=None):
-    """
+    r"""
     Perform equilibrium calculations for the parameter sets
     in params
 
@@ -104,7 +104,7 @@ def eq_calc_samples(
         interface to dask.distributed compute cluster
     dbf : Database
         Thermodynamic database containing the relevant parameters
-    conds: dict or (list of dict)
+    conds : dict or list of dict
         StateVariables and their corresponding value
     params : numpy array
         Array where the rows contain the parameter sets
@@ -113,13 +113,14 @@ def eq_calc_samples(
         Names of components to consider in the calculation
     phases : list or dict
         Names of phases to consider in the calculation
-    savef : string
+    savef : str
         Save file for the equilibrium calculations
 
     Returns
     -------
-    structured equilibrium calculations for parameter sets in
-    params
+    structured equilibrium calculation
+        structured equilibrium calculations for parameter sets in
+        params
 
     Examples
     --------
