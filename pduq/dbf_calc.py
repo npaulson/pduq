@@ -73,14 +73,6 @@ def eq_calc_chunk_(chunk, dbf, comps, phases, conds,
 
         paramA = np.squeeze(params[index, :])
 
-        # param_dict = {param_name: param for param_name, param
-        #               in zip(symbols_to_fit, np.squeeze(params[index, :]))}
-
-        # parameters = OrderedDict(sorted(param_dict.items(), key=str))
-
-        # eq_result_ = equilibrium(dbf, comps, phases, conds,
-        #                          parameters=parameters, callables=eq_callables)
-
         eq_result_ = eq_calc_(dbf, comps, phases, conds,
                               paramA, symbols_to_fit, eq_callables)
 
@@ -92,16 +84,14 @@ def eq_calc_chunk_(chunk, dbf, comps, phases, conds,
 
 
 def eq_calc_samples(
-        client, dbf, conds, params, comps=None, phases=None,
+        dbf, conds, params, client=None, comps=None, phases=None,
         savef=None):
-    r"""
+    """
     Perform equilibrium calculations for the parameter sets
     in params
 
     Parameters
     ----------
-    client : Client
-        interface to dask.distributed compute cluster
     dbf : Database
         Thermodynamic database containing the relevant parameters
     conds : dict or list of dict
@@ -109,6 +99,8 @@ def eq_calc_samples(
     params : numpy array
         Array where the rows contain the parameter sets
         for the pycalphad equilibrium calculation
+    client : Client, optional
+        interface to dask.distributed compute cluster
     comps : list
         Names of components to consider in the calculation
     phases : list or dict
@@ -150,13 +142,15 @@ def eq_calc_samples(
         nch = 20
     chunks = [list(range(neq))[ii::nch] for ii in range(nch)]
 
-    A = client.map(eq_calc_chunk_, chunks, **kwargs)
-
-    eqL = client.gather(A)
-
-    eqL = list(chain.from_iterable(eqL))
-
-    client.close()
+    if client is None:
+        eqL = []
+        for chunk in chunks:
+            eqL += eq_calc_chunk_(chunk, **kwargs)
+    else:
+        A = client.map(eq_calc_chunk_, chunks, **kwargs)
+        eqL = client.gather(A)
+        eqL = list(chain.from_iterable(eqL))
+        client.close()
 
     eqC = xr.concat(eqL, 'sample')
     eqC.coords['sample'] = np.arange(neq)

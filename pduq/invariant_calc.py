@@ -7,19 +7,18 @@ logging.basicConfig(filename='pduq.log', level=logging.INFO)
 
 
 def invariant_samples(
-        client, dbf, params, X, P, Tl, Tu, comp,
-        comps=None, phases=None):
+        dbf, params, X, P, Tl, Tu, comp,
+        client=None, comps=None, phases=None):
     """
     Find the composition and temperature of the invariants
     for parameter sets in params (for a binary)
 
     Parameters
     ----------
-    client : Client
-        interface to dask.distributed compute cluster
+
     dbf : Database
         Thermodynamic database containing the relevant parameters
-    conds : dict or (list of dict)
+    conds : dict or list of dict
         StateVariables and their corresponding value
     params : numpy array
         Array where the rows contain the parameter sets
@@ -34,9 +33,11 @@ def invariant_samples(
         Upper temperature bound to search for the invariants
     comp : str
         Name of the element
-    comps : list
+    client : Client, optional
+        interface to dask.distributed compute cluster
+    comps : list, optional
         Names of components to consider in the calculation
-    phases : list or dict
+    phases : list or dict, optional
         Names of phases to consider in the calculation
 
     Returns
@@ -78,11 +79,14 @@ def invariant_samples(
     # invariant_(0, **kwargs)
 
     # define the map for the invariant calculation for neq parameter sets
-    A = client.map(invariant_, range(neq), **kwargs)
-
-    invL = client.gather(A)
-
-    client.close()
+    if client is None:
+        invL = []
+        for ii in range(neq):
+            invL.append(invariant_(ii, **kwargs))
+    else:
+        A = client.map(invariant_, range(neq), **kwargs)
+        invL = client.gather(A)
+        client.close()
 
     # collect the key results after the map
     Tv = np.zeros((neq,))
