@@ -42,6 +42,6 @@ script:
   - set -e
   - make -C docs html
   - pip install doctr
-  - doctr deploy --built-docs <path/to/built/html/> <target-directory>
+  - doctr deploy --built-docs docs/build/html .
 notifications:
   email: False
