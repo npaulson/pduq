@@ -1,0 +1,388 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pduq.invariant_calc &mdash; PDUQ 0.post22+g8ac2c5c documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
+        <script type="text/javascript" src="../../_static/copybutton.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> PDUQ
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.post22+g8ac2c5c
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release-history.html">Release History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PDUQ</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pduq.invariant_calc</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pduq.invariant_calc</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">.dbf_calc</span> <span class="k">import</span> <span class="n">eq_calc_</span>  <span class="c1"># , get_eq_callables_</span>
+<span class="kn">from</span> <span class="nn">espei.utils</span> <span class="k">import</span> <span class="n">database_symbols_to_fit</span>
+<span class="kn">from</span> <span class="nn">pycalphad</span> <span class="k">import</span> <span class="n">variables</span> <span class="k">as</span> <span class="n">v</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;pduq.log&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="invariant_samples"><a class="viewcode-back" href="../../usage.html#pduq.invariant_calc.invariant_samples">[docs]</a><span class="k">def</span> <span class="nf">invariant_samples</span><span class="p">(</span>
+        <span class="n">dbf</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Tl</span><span class="p">,</span> <span class="n">Tu</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span>
+        <span class="n">client</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">comps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">phases</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find the composition and temperature of the invariants</span>
+<span class="sd">    for parameter sets in params (for a binary)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    dbf : Database</span>
+<span class="sd">        Thermodynamic database containing the relevant parameters</span>
+<span class="sd">    conds : dict or list of dict</span>
+<span class="sd">        StateVariables and their corresponding value</span>
+<span class="sd">    params : numpy array</span>
+<span class="sd">        Array where the rows contain the parameter sets</span>
+<span class="sd">        for the pycalphad equilibrium calculation</span>
+<span class="sd">    X : float</span>
+<span class="sd">        Guess for the mole fraction (of comp) of the invariant</span>
+<span class="sd">    P : float</span>
+<span class="sd">        Pressure (in Pa) at which to search for the invariants</span>
+<span class="sd">    Tl : float</span>
+<span class="sd">        Lower temperature bound to search for the invariants</span>
+<span class="sd">    Tu : float</span>
+<span class="sd">        Upper temperature bound to search for the invariants</span>
+<span class="sd">    comp : str</span>
+<span class="sd">        Name of the element</span>
+<span class="sd">    client : Client, optional</span>
+<span class="sd">        interface to dask.distributed compute cluster</span>
+<span class="sd">    comps : list, optional</span>
+<span class="sd">        Names of components to consider in the calculation</span>
+<span class="sd">    phases : list or dict, optional</span>
+<span class="sd">        Names of phases to consider in the calculation</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Tv : list</span>
+<span class="sd">        List of invariant temperatures corresponding to the</span>
+<span class="sd">        parameter sets</span>
+<span class="sd">    phv : list of list</span>
+<span class="sd">        List of lists of phases</span>
+<span class="sd">    bndv : numpy array</span>
+<span class="sd">        Array where the first index corresponds to the parameter</span>
+<span class="sd">        set, and the second index corresponds to the composition</span>
+<span class="sd">        of the zero phase fraction bounaries of the first and last</span>
+<span class="sd">        phases in phv, and of the three phase equilibrium.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    None yet</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">comps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">comps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dbf</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">phases</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">phases</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dbf</span><span class="o">.</span><span class="n">phases</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="n">neq</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># calculate invariants for neq parameter sets</span>
+
+    <span class="n">symbols_to_fit</span> <span class="o">=</span> <span class="n">database_symbols_to_fit</span><span class="p">(</span><span class="n">dbf</span><span class="p">)</span>
+
+    <span class="c1"># eq_callables = get_eq_callables_(dbf, comps, phases, symbols_to_fit)</span>
+    <span class="n">eq_callables</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># eq_callables is disabled for current pycalcphad</span>
+
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dbf&#39;</span><span class="p">:</span> <span class="n">dbf</span><span class="p">,</span> <span class="s1">&#39;comps&#39;</span><span class="p">:</span> <span class="n">comps</span><span class="p">,</span> <span class="s1">&#39;phases&#39;</span><span class="p">:</span> <span class="n">phases</span><span class="p">,</span>
+              <span class="s1">&#39;X&#39;</span><span class="p">:</span> <span class="n">X</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">:</span> <span class="n">P</span><span class="p">,</span> <span class="s1">&#39;Tl&#39;</span><span class="p">:</span> <span class="n">Tl</span><span class="p">,</span> <span class="s1">&#39;Tu&#39;</span><span class="p">:</span> <span class="n">Tu</span><span class="p">,</span> <span class="s1">&#39;comp&#39;</span><span class="p">:</span> <span class="n">comp</span><span class="p">,</span>
+              <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">params</span><span class="p">,</span> <span class="s1">&#39;symbols_to_fit&#39;</span><span class="p">:</span> <span class="n">symbols_to_fit</span><span class="p">,</span>
+              <span class="s1">&#39;eq_callables&#39;</span><span class="p">:</span> <span class="n">eq_callables</span><span class="p">}</span>
+
+    <span class="c1"># invariant_(0, **kwargs)</span>
+
+    <span class="c1"># define the map for the invariant calculation for neq parameter sets</span>
+    <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">invL</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">neq</span><span class="p">):</span>
+            <span class="n">invL</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">invariant_</span><span class="p">(</span><span class="n">ii</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">invariant_</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">neq</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">invL</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c1"># collect the key results after the map</span>
+    <span class="n">Tv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">neq</span><span class="p">,))</span>
+    <span class="n">phv</span> <span class="o">=</span> <span class="n">neq</span><span class="o">*</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+    <span class="n">bndv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">neq</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">neq</span><span class="p">):</span>
+        <span class="n">Tv</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">invL</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">phv</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">invL</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">bndv</span><span class="p">[</span><span class="n">ii</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">invL</span><span class="p">[</span><span class="n">ii</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">Tv</span><span class="p">,</span> <span class="n">phv</span><span class="p">,</span> <span class="n">bndv</span></div>
+
+
+<span class="k">def</span> <span class="nf">invariant_</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">dbf</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">comps</span><span class="p">,</span> <span class="n">phases</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">Tl</span><span class="p">,</span> <span class="n">Tu</span><span class="p">,</span> <span class="n">comp</span><span class="p">,</span>
+               <span class="n">symbols_to_fit</span><span class="p">,</span> <span class="n">eq_callables</span><span class="p">):</span>
+
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;dbf&#39;</span><span class="p">:</span> <span class="n">dbf</span><span class="p">,</span> <span class="s1">&#39;comps&#39;</span><span class="p">:</span> <span class="n">comps</span><span class="p">,</span> <span class="s1">&#39;phases&#39;</span><span class="p">:</span> <span class="n">phases</span><span class="p">,</span>
+              <span class="s1">&#39;paramA&#39;</span><span class="p">:</span> <span class="n">params</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="p">:],</span> <span class="s1">&#39;symbols_to_fit&#39;</span><span class="p">:</span> <span class="n">symbols_to_fit</span><span class="p">,</span>
+              <span class="s1">&#39;eq_callables&#39;</span><span class="p">:</span> <span class="n">eq_callables</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">mini</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        perform the equilibrium calculation at a specified temperature</span>
+<span class="sd">        and return the list of unique phases in equilibrium along with the</span>
+<span class="sd">        equlibrium data object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">conds</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="o">.</span><span class="n">P</span><span class="p">:</span> <span class="n">P</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">T</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">X</span><span class="p">(</span><span class="n">comp</span><span class="p">):</span> <span class="n">X</span><span class="p">}</span>
+        <span class="n">eq</span> <span class="o">=</span> <span class="n">eq_calc_</span><span class="p">(</span><span class="n">conds</span><span class="o">=</span><span class="n">conds</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">PhT</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">eq</span><span class="o">.</span><span class="n">Phase</span><span class="p">))</span>
+        <span class="k">if</span> <span class="s1">&#39;&#39;</span> <span class="ow">in</span> <span class="n">PhT</span><span class="p">:</span>
+            <span class="n">PhT</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">eq</span><span class="p">,</span> <span class="n">PhT</span>
+
+    <span class="c1"># perform equilibrium calculations at the lower bound, middle, and</span>
+    <span class="c1"># upper bound temperatures</span>
+    <span class="n">Tm</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">Tl</span><span class="o">+</span><span class="n">Tu</span><span class="p">)</span>  <span class="c1"># middle temperature</span>
+    <span class="n">eql</span><span class="p">,</span> <span class="n">PhTl</span> <span class="o">=</span> <span class="n">mini</span><span class="p">(</span><span class="n">Tl</span><span class="p">)</span>
+    <span class="n">eqm</span><span class="p">,</span> <span class="n">PhTm</span> <span class="o">=</span> <span class="n">mini</span><span class="p">(</span><span class="n">Tm</span><span class="p">)</span>
+    <span class="n">equ</span><span class="p">,</span> <span class="n">PhTu</span> <span class="o">=</span> <span class="n">mini</span><span class="p">(</span><span class="n">Tu</span><span class="p">)</span>
+
+    <span class="c1"># now we use the bisection method to find the invariant temperature</span>
+    <span class="c1"># and composition</span>
+
+    <span class="c1"># identify the number of calculations so that the error in the</span>
+    <span class="c1"># temperature is less than errlim</span>
+    <span class="n">errlim</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">niter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">errlim</span><span class="o">/</span><span class="p">(</span><span class="n">Tu</span><span class="o">-</span><span class="n">Tl</span><span class="p">))</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">niter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">niter</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">niter</span><span class="p">):</span>
+        <span class="c1"># if the phases in equilibrium at the middle temperature are</span>
+        <span class="c1"># different than at the lower temperature, then the invariant</span>
+        <span class="c1"># will be between the lower and middle temperature. We can then</span>
+        <span class="c1"># set the upper temperature to the previous middle temperature.</span>
+        <span class="c1"># Otherwise, the invariant will be between the middle and upper</span>
+        <span class="c1"># temperature.</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">PhTm</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">(</span><span class="n">PhTl</span><span class="p">):</span>
+            <span class="n">Tu</span> <span class="o">=</span> <span class="n">Tm</span>
+            <span class="n">equ</span> <span class="o">=</span> <span class="n">eqm</span>
+            <span class="n">PhTu</span> <span class="o">=</span> <span class="n">PhTm</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Tl</span> <span class="o">=</span> <span class="n">Tm</span>
+            <span class="n">eql</span> <span class="o">=</span> <span class="n">eqm</span>
+            <span class="n">PhTl</span> <span class="o">=</span> <span class="n">PhTm</span>
+        <span class="n">Tm</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">Tl</span> <span class="o">+</span> <span class="n">Tu</span><span class="p">)</span>  <span class="c1"># get the new middle temperature</span>
+        <span class="n">eqm</span><span class="p">,</span> <span class="n">PhTm</span> <span class="o">=</span> <span class="n">mini</span><span class="p">(</span><span class="n">Tm</span><span class="p">)</span>  <span class="c1"># calculate the Tm equilibrium</span>
+        <span class="c1"># print(Tm, &#39; &#39;, PhTm)</span>
+
+    <span class="k">def</span> <span class="nf">getbnd</span><span class="p">(</span><span class="n">eq</span><span class="p">,</span> <span class="n">PhT</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        get the molar compositions of the phases in PhT</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bnd</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">PhT</span><span class="p">:</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">eq</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">eq</span><span class="o">.</span><span class="n">Phase</span> <span class="o">==</span> <span class="n">phase</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">component</span><span class="o">=</span><span class="n">comp</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="s1">&#39;vertex&#39;</span><span class="p">)</span>
+            <span class="n">bnd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bnd</span><span class="p">)</span>
+
+    <span class="c1"># PhTA are the phases at Tl and Tu</span>
+    <span class="n">PhTA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">PhTl</span><span class="p">,</span> <span class="n">PhTu</span><span class="p">])</span>
+    <span class="c1"># bndA are the molar compositions of the phases in PhTl and PhTu</span>
+    <span class="n">bndA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">getbnd</span><span class="p">(</span><span class="n">eql</span><span class="p">,</span> <span class="n">PhTl</span><span class="p">),</span> <span class="n">getbnd</span><span class="p">(</span><span class="n">equ</span><span class="p">,</span> <span class="n">PhTu</span><span class="p">)])</span>
+    <span class="c1"># phs are the unique phases in the three phase region</span>
+    <span class="n">phs</span><span class="p">,</span> <span class="n">indx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">PhTA</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># bnd are the molar compositions corresponding to phs</span>
+    <span class="n">bnd</span> <span class="o">=</span> <span class="n">bndA</span><span class="p">[</span><span class="n">indx</span><span class="p">]</span>
+
+    <span class="n">indx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">bnd</span><span class="p">)</span>
+    <span class="n">phs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">phs</span><span class="p">[</span><span class="n">indx</span><span class="p">])</span>
+    <span class="n">bnd</span> <span class="o">=</span> <span class="n">bnd</span><span class="p">[</span><span class="n">indx</span><span class="p">]</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Invariant computed for set &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;T = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">Tm</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; +/- &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">Tm</span><span class="o">-</span><span class="n">Tl</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;K&#39;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">phs</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">bnd</span><span class="p">))</span>
+
+    <span class="c1"># print(&#39;Invariant computed for set &#39;, index)</span>
+    <span class="c1"># print(&#39;T=&#39;, Tm, &#39;+/-&#39;, Tm-Tl, &#39;K&#39;)</span>
+    <span class="c1"># print(phs)</span>
+    <span class="c1"># print(bnd)</span>
+
+    <span class="k">return</span> <span class="n">Tm</span><span class="p">,</span> <span class="n">phs</span><span class="p">,</span> <span class="n">bnd</span><span class="p">,</span> <span class="n">index</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Argonne National Laboratory
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
