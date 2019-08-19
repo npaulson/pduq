@@ -1,0 +1,25 @@
+name: pduq
+channels:
+  - conda-forge
+  - pycalphad
+dependencies:
+  - python=3.6
+  - pycalphad>=0.8
+  - numpy
+  - scipy
+  - sympy>=1.2
+  - six
+  - dask>=.18
+  - distributed
+  - tinydb>=3.8
+  - scikit-learn
+  - emcee
+  - pyyaml
+  - cerberus
+  - bibtexparser
+  - nose
+  - mock
+  - twine
+  - seaborn
+  - flake8
+  - espei
