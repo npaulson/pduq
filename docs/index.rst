@@ -12,7 +12,7 @@ PDUQ
 
    self
    installation
-   usage
+   API Documentation <api>
    release-history
 
 PDUQ, or Phase Diagram Uncertainty Quantification, is a tool

@@ -47,7 +47,7 @@ def get_phase_prob(eq, phaseregL):
     eq : xarray object
         Structured equilibirum calculation containing a 'sample'
         dimension correspoinding to different parameter sets
-    phaseregL : (tuple, list) of str
+    phaseregL : tuple or list of str
         list of considered phases in equilibirum
 
     Returns
@@ -135,7 +135,7 @@ def plot_dist(eq, coordD, phaseregL, phase, typ, figsize=None):
         Dictionary with 'T' for temperature, 'X_EL' for the molar
         composition of element EL, and 'component' for the element
         to consider for the composition
-    phaseregL : (tuple, list) of str
+    phaseregL : tuple or list of str
         list of considered phases in equilibirum
     phase : str
         Phase of interest. This must be specified, but only
@@ -146,7 +146,7 @@ def plot_dist(eq, coordD, phaseregL, phase, typ, figsize=None):
         X: molar composition of the selected component
         GM: molar Gibbs energy of the X-T-P point
         MU: chemical potential of the selected component
-    figsize : (tuple, list) of int or float
+    figsize : tuple or list of int or float, optional
         Plot dimensions in inches
 
     Returns
@@ -223,29 +223,29 @@ def plot_property(dbf, comps, phaseL, params, T, prop,
         property (or attribute in pycalphad terminology) to sample,
         e.g. GM for molar gibbs energy or H_MIX for the enthalpy of
         mixing
-    config : tuple (optional)
+    config : tuple, optional
         Sublattice configuration as a tuple, e.g. (“CU”, (“CU”, “MG”))
-    datasets : espei.utils.PickleableTinyDB (optional)
+    datasets : espei.utils.PickleableTinyDB, optional
         Database of datasets to search for data
-    xlims : list or tuple of float (optional)
+    xlims : list or tuple of float, optional
         List or tuple with two floats corresponding to the
         minimum and maximum molar composition of comp
-    xlabel : str (optional)
+    xlabel : str, optional
         plot x label
-    ylabel : str (optional)
+    ylabel : str, optional
         plot y label
-    yscale : int or float (optional)
+    yscale : int or float, optional
         scaling factor to apply to property (e.g. to plot kJ/mol.
         instead of J/mol. choose yscale to be 0.001)
-    phase_label_dict : dict (optional)
+    phase_label_dict : dict, optional
         Dictionary with keys given by phase names and corresponding
         strings to use in plotting (e.g. to enable LaTeX labels)
-    unit : str
+    unit : str, optional
         Unit to plot on the y-axis for the property of interest
-    cdict : dict (optional)
+    cdict : dict, optional
         Dictionary with phase names and corresponding
         colors
-    figsize : (tuple, list) of int or float (optional)
+    figsize : tuple or list of int or float, optional
         Plot dimensions in inches
 
     Returns
@@ -401,12 +401,12 @@ def plot_binary(eq, comp, alpha=None, cdict=None):
     ----------
     eq : xarray object
         Structured equilibirum calculation
-    comp : string
+    comp : str
         Label for species to plot on the x-axis,
         e.g. MG for magnesium
-    alpha : float (optional)
+    alpha : float, optional
         Number between 0 and 1 for the line transparency
-    cdict : dict (optional)
+    cdict : dict, optional
         Dictionary with phase names and corresponding
         colors
 
@@ -548,17 +548,17 @@ def plot_phasereg_prob(eq, phaseregL, title=None, figname=None,
     eq : xarray object
         Structured equilibirum calculation containing a 'sample'
         dimension correspoinding to different parameter sets
-    phaseregL : (tuple, list) of str
+    phaseregL : tuple or list of str
         list of considered phases in equilibirum
-    title : string (optional)
+    title : str, optional
         title of the plot
-    figname : string (optional)
+    figname : str, optional
         name of the figure to differentiate plot windows
-    coordplt : (tuple, list) of str
+    coordplt : tuple or list of str, optional
         list containing names of the axes
-    typ : str
+    typ : str, optional
         plot type. This can either be 'grayscale' or 'contour'
-    figsize : (tuple, list) of int or float (optional)
+    figsize : tuple or list of int or float, optional
         Plot dimensions in inches
 
     Returns
@@ -633,24 +633,24 @@ def plot_superimposed(
     eq : xarray object
         Structured equilibirum calculation containing a 'sample'
         dimension correspoinding to different parameter sets
-    comp : string
+    comp : str
         Label for species to plot on the x-axis,
         e.g. MG for magnesium
-    nsp : int (optional)
+    nsp : int, optional
         Number of phase diagrams to superimpose, with the maximum
         given by the number of samples in eq
-    alpha : float (optional)
+    alpha : float, optional
         Number between 0 and 1 for the line transparency
-    phase_label_dict : dict (optional)
+    phase_label_dict : dict, optional
         Dictionary with keys given by phase names and corresponding
         strings to use in plotting (e.g. to enable LaTeX labels)
-    xlims : list or tuple of float (optional)
+    xlims : list or tuple of float, optional
         List or tuple with two floats corresponding to the
         minimum and maximum molar composition of comp
-    cdict : dict (optional)
+    cdict : dict, optional
         Dictionary with phase names and corresponding
         colors
-    figsize : (tuple, list) of int or float
+    figsize : tuple or list of int or float, optional
         Plot dimensions in inches
 
     Returns
@@ -722,11 +722,11 @@ def plot_trace(trace, plabelL=None, figsize=None, savefig=False):
         [nwalkers, nlinksT, npar], where nwalkers is the number
         of MCMC chains, nlinksT is the number of MCMC iterations,
         and npar is the number of CALPHAD parameters
-    plabelL : list
+    plabelL : list, optional
         List of plot labels for the parameters
-    figsize : (tuple, list) of int or float
+    figsize : tuple or list of int or float, optional
         Plot dimensions in inches
-    savefig : bool
+    savefig : bool, optional
         If savefig is True, plots will be automatically saved
 
     Returns
