@@ -55,7 +55,36 @@ def invariant_samples(
 
     Examples
     --------
-    None yet
+    >>> # let's do a multicore example
+    >>> # first import modules and functions
+    >>> import numpy as np
+    >>> from dask.distributed import Client
+    >>> from distributed.deploy.local import LocalCluster
+    >>> from pycalphad import Database, variables as v
+    >>> from pduq.invariant_calc import invariant_samples
+    >>> # start the distributed client to parallelize the calculation
+    >>> c = LocalCluster(n_workers=2, threads_per_worker=1)
+    >>> client = Client(c)
+    >>> # load the pycalphad database
+    >>> dbf = Database('CU-MG_param_gen.tdb')
+    >>> # load the parameter file
+    >>> params = np.loadtxt('trace.csv', delimeter=',')[-2:, :]
+    >>> # calculate the locations of invariant points for these two
+    >>> # parameter sets in params
+    >>> Tv, phv, bndv = invariant_samples(
+    >>>     dbf, params, client=client, X=.2, P=101325,
+    >>>     Tl=600, Tu=1400, comp='MG')
+    >>> # print the temperatures of the invariant points
+    >>> print(Tv)
+    [1008.29467773 993.89038086]
+    >>> # print the phases in equilibrium at the invariant points
+    >>> print(phv)
+    [['FCC_A1' 'LIQUID' 'LAVES_C15'], ['FCC_A1' 'LIQUID' 'LAVES_C15']]
+    >>> # print the Mg molar fractions for the left phase boundary,
+    >>> # the invariant, and the right phase boundary
+    >>> print(bndv)
+    [[0.04005779 0.21173958 0.33261747]
+     [0.04096447 0.21720666 0.33295817]]
     """
 
     if comps is None:

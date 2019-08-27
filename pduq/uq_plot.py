@@ -47,7 +47,7 @@ def get_phase_prob(eq, phaseregL):
     eq : xarray object
         Structured equilibirum calculation containing a 'sample'
         dimension correspoinding to different parameter sets
-    phaseregL : (tuple, list) of str
+    phaseregL : tuple or list of str
         list of considered phases in equilibirum
 
     Returns
@@ -59,7 +59,18 @@ def get_phase_prob(eq, phaseregL):
 
     Examples
     --------
-    None yet
+    >>> import pickle
+    >>> import pduq.uq_plot as uq
+    >>> # load the collated equilibrium calculation for a single XTP
+    >>> # point as produced by dbf_calc.eq_calc_samples
+    >>> with open('single_point.pkl', 'rb') as buff:
+    >>>     eq = pickle.load(buff)
+    >>> # define a set of phases in equilibrium to evaluate
+    >>> phaseregL = ['FCC_A1', 'LIQUID']
+    >>> # calculate the probability of the set of phases having a
+    >>> # non-zero phase fraction
+    >>> print(uq.get_phase_prob(eq, phaseregL))
+    0.2
     """
 
     phsum = np.zeros(eq.NP.shape[:-1])
@@ -135,7 +146,7 @@ def plot_dist(eq, coordD, phaseregL, phase, typ, figsize=None):
         Dictionary with 'T' for temperature, 'X_EL' for the molar
         composition of element EL, and 'component' for the element
         to consider for the composition
-    phaseregL : (tuple, list) of str
+    phaseregL : tuple or list of str
         list of considered phases in equilibirum
     phase : str
         Phase of interest. This must be specified, but only
@@ -146,7 +157,7 @@ def plot_dist(eq, coordD, phaseregL, phase, typ, figsize=None):
         X: molar composition of the selected component
         GM: molar Gibbs energy of the X-T-P point
         MU: chemical potential of the selected component
-    figsize : (tuple, list) of int or float
+    figsize : tuple or list of int or float, optional
         Plot dimensions in inches
 
     Returns
@@ -157,7 +168,20 @@ def plot_dist(eq, coordD, phaseregL, phase, typ, figsize=None):
 
     Examples
     --------
-    None yet
+    >>> import pickle
+    >>> import pduq.uq_plot as uq
+    >>> # load the collated equilibrium calculation for a single XTP
+    >>> # point as produced by dbf_calc.eq_calc_samples
+    >>> with open('single_point.pkl', 'rb') as buff:
+    >>>     eq = pickle.load(buff)
+    >>> # identify the XTP point of interest
+    >>> coordD = {'T':1003, 'X_MG':.214, 'component':'MG'}
+    >>> phaseregL = ['FCC_A1', 'LIQUID']
+    >>> phase = 'FCC_A1'
+    >>> # plot the distribution of phase fractions for the selected
+    >>> # phase in an equilibrium calculation with the phases
+    >>> # considered in phaseregL.
+    >>> uq.plot_dist(eq, coordD, phaseregL, phase, typ='NP')
     """
 
     compL = np.array([])  # array to collect property of interest
@@ -223,29 +247,29 @@ def plot_property(dbf, comps, phaseL, params, T, prop,
         property (or attribute in pycalphad terminology) to sample,
         e.g. GM for molar gibbs energy or H_MIX for the enthalpy of
         mixing
-    config : tuple (optional)
+    config : tuple, optional
         Sublattice configuration as a tuple, e.g. (“CU”, (“CU”, “MG”))
-    datasets : espei.utils.PickleableTinyDB (optional)
+    datasets : espei.utils.PickleableTinyDB, optional
         Database of datasets to search for data
-    xlims : list or tuple of float (optional)
+    xlims : list or tuple of float, optional
         List or tuple with two floats corresponding to the
         minimum and maximum molar composition of comp
-    xlabel : str (optional)
+    xlabel : str, optional
         plot x label
-    ylabel : str (optional)
+    ylabel : str, optional
         plot y label
-    yscale : int or float (optional)
+    yscale : int or float, optional
         scaling factor to apply to property (e.g. to plot kJ/mol.
         instead of J/mol. choose yscale to be 0.001)
-    phase_label_dict : dict (optional)
+    phase_label_dict : dict, optional
         Dictionary with keys given by phase names and corresponding
         strings to use in plotting (e.g. to enable LaTeX labels)
-    unit : str
+    unit : str, optional
         Unit to plot on the y-axis for the property of interest
-    cdict : dict (optional)
+    cdict : dict, optional
         Dictionary with phase names and corresponding
         colors
-    figsize : (tuple, list) of int or float (optional)
+    figsize : tuple or list of int or float, optional
         Plot dimensions in inches
 
     Returns
@@ -253,7 +277,20 @@ def plot_property(dbf, comps, phaseL, params, T, prop,
 
     Examples
     --------
-    None yet
+    >>> import numpy as np
+    >>> import pduq.uq_plot as uq
+    >>> from pycalphad import Database
+    >>> dbf = Database('CU-MG_param_gen.tdb')
+    >>> comps = ['MG', 'CU', 'VA']
+    >>> phaseL = ['CUMG2', 'LIQUID']
+    >>> params = np.loadtxt('params.npy')[: -1, :]
+    >>> T = 650
+    >>> prop = 'GM'
+    >>> # Plot the molar gibbs energy of all phases in phaseL
+    >>> # versus molar fraction of MG at 650K. This will have
+    >>> # uncertainty intervals generated by the parameter sets
+    >>> # in params
+    >>> uq.plot_property(dbf, comps, phaseL, params, T, prop)
     """
 
     symbols_to_fit = database_symbols_to_fit(dbf)
@@ -401,12 +438,12 @@ def plot_binary(eq, comp, alpha=None, cdict=None):
     ----------
     eq : xarray object
         Structured equilibirum calculation
-    comp : string
+    comp : str
         Label for species to plot on the x-axis,
         e.g. MG for magnesium
-    alpha : float (optional)
+    alpha : float, optional
         Number between 0 and 1 for the line transparency
-    cdict : dict (optional)
+    cdict : dict, optional
         Dictionary with phase names and corresponding
         colors
 
@@ -418,7 +455,15 @@ def plot_binary(eq, comp, alpha=None, cdict=None):
 
     Examples
     --------
-    None yet
+    >>> import pickle
+    >>> import pduq.uq_plot as uq
+    >>> with open('single.pkl', 'rb') as buff:
+    >>>     eq = pickle.load(buff)
+    >>> comp = 'MG'
+    >>> # plot a binary phase diagram for a set of
+    >>> # equilibrium calculations, and comp as the
+    >>> # molar fraction on the x-axis
+    >>> uq.plot_binary(eq, comp)
     """
 
     Tvec = eq.get('T').values  # all temperature values
@@ -548,17 +593,17 @@ def plot_phasereg_prob(eq, phaseregL, title=None, figname=None,
     eq : xarray object
         Structured equilibirum calculation containing a 'sample'
         dimension correspoinding to different parameter sets
-    phaseregL : (tuple, list) of str
+    phaseregL : tuple or list of str
         list of considered phases in equilibirum
-    title : string (optional)
+    title : str, optional
         title of the plot
-    figname : string (optional)
+    figname : str, optional
         name of the figure to differentiate plot windows
-    coordplt : (tuple, list) of str
+    coordplt : tuple or list of str, optional
         list containing names of the axes
-    typ : str
+    typ : str, optional
         plot type. This can either be 'grayscale' or 'contour'
-    figsize : (tuple, list) of int or float (optional)
+    figsize : tuple or list of int or float, optional
         Plot dimensions in inches
 
     Returns
@@ -566,7 +611,16 @@ def plot_phasereg_prob(eq, phaseregL, title=None, figname=None,
 
     Examples
     --------
-    None yet
+    >>> import pickle
+    >>> import pduq.uq_plot as uq
+    >>> with open('multiple.pkl', 'rb') as buff:
+    >>>     eq = pickle.load(buff)
+    >>> phaseregL = ['FCC_A1', 'LIQUID']
+    >>> # plot the probability of non-zero phase
+    >>> # fraction versus composition and temperature
+    >>> # for the phase region in phaseregL 
+    >>> # based on the equilibrium calculations in eq
+    >>> uq.plot_phasereg_prb(eq, phaseregL)
     """
 
     sns.set_style('ticks')
@@ -633,24 +687,24 @@ def plot_superimposed(
     eq : xarray object
         Structured equilibirum calculation containing a 'sample'
         dimension correspoinding to different parameter sets
-    comp : string
+    comp : str
         Label for species to plot on the x-axis,
         e.g. MG for magnesium
-    nsp : int (optional)
+    nsp : int, optional
         Number of phase diagrams to superimpose, with the maximum
         given by the number of samples in eq
-    alpha : float (optional)
+    alpha : float, optional
         Number between 0 and 1 for the line transparency
-    phase_label_dict : dict (optional)
+    phase_label_dict : dict, optional
         Dictionary with keys given by phase names and corresponding
         strings to use in plotting (e.g. to enable LaTeX labels)
-    xlims : list or tuple of float (optional)
+    xlims : list or tuple of float, optional
         List or tuple with two floats corresponding to the
         minimum and maximum molar composition of comp
-    cdict : dict (optional)
+    cdict : dict, optional
         Dictionary with phase names and corresponding
         colors
-    figsize : (tuple, list) of int or float
+    figsize : tuple or list of int or float, optional
         Plot dimensions in inches
 
     Returns
@@ -658,7 +712,16 @@ def plot_superimposed(
 
     Examples
     --------
-    None yet
+    >>> import pickle
+    >>> import pduq.uq_plot as uq
+    >>> with open('multiple.pkl', 'rb') as buff:
+    >>>     eq = pickle.load(buff)
+    >>> comp = 'MG'
+    >>> # plot the superimposed binary phase diagrams
+    >>> # for all of the parameter sets represented by
+    >>> # the equilibrium calculations in eq, with
+    >>> # the molar fraction of MG on the x-axis
+    >>> uq.plot_superimposed(eq, comp)
     """
 
     phaseL = list(np.unique(eq.get('Phase').values))
@@ -722,11 +785,11 @@ def plot_trace(trace, plabelL=None, figsize=None, savefig=False):
         [nwalkers, nlinksT, npar], where nwalkers is the number
         of MCMC chains, nlinksT is the number of MCMC iterations,
         and npar is the number of CALPHAD parameters
-    plabelL : list
+    plabelL : list, optional
         List of plot labels for the parameters
-    figsize : (tuple, list) of int or float
+    figsize : tuple or list of int or float, optional
         Plot dimensions in inches
-    savefig : bool
+    savefig : bool, optional
         If savefig is True, plots will be automatically saved
 
     Returns
@@ -734,7 +797,14 @@ def plot_trace(trace, plabelL=None, figsize=None, savefig=False):
 
     Examples
     --------
-    None yet
+    >>> import numpy as np
+    >>> import pduq.uq_plot as uq
+    >>> trace = np.loadtxt('trace.csv', delimiter=',')
+    >>> plabelL = [r"$^{0}G_{CU \colon MG}^{Laves}$",
+    >>>            r"$^{1}L_{CU \colon MG}^{FCC}$",
+    >>>            ...
+    >>>            r"$^{0}L_{CU \colon MG}^{liquid}$"]
+    >>> uq.plot_trace(trace, plabelL=plabelL, figsize=[5, 3])
     """
 
     nwalkers, nlinksT, npar = trace.shape
