@@ -116,7 +116,29 @@ def eq_calc_samples(
 
     Examples
     --------
-    None yet
+    >>> # let's do a multicore example
+    >>> # first import modules and functions
+    >>> import numpy as np
+    >>> from pycalphad import Database, variables as v
+    >>> from distributed.deploy.local import LocalCluster
+    >>> from pduq.dbf_calc import eq_calc_samples
+    >>> # start the distributed client to parallelize the calculation
+    >>> c = LocalCluster(n_workers=2, threads_per_worker=1)
+    >>> client = Client(c)
+    >>> # load the pycalphad database
+    >>> dbf = Database('CU-MG_param_gen.tdb')
+    >>> # load the parameter file
+    >>> params = np.loadtxt('trace.csv', delimeter=',')
+    >>> # define the equilibrium conditions
+    >>> conds = {v.P: 101325, v.T: 1003, v.X('MG'): 0.214}
+    >>> # perform the parallel equilibrium calculations for the last two
+    >>> # parameter sets in param
+    >>> eqC = eq_calc_samples(dbf, conds, params[-2:, :], client=client)
+    >>> # let's look at the phases in equilibrium for the two parameter
+    >>> # sets
+    >>> print(np.squeeze(eqC.Phase.values))
+    [['FCC_A1' 'LAVES_C15' '']
+     ['LIQUID' '' '']]
     """
 
     if comps is None:
