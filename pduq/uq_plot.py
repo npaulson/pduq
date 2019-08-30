@@ -6,6 +6,7 @@ import xarray as xr
 from espei.core_utils import get_data
 from espei.utils import database_symbols_to_fit
 from collections import OrderedDict
+from scipy.stats import gaussian_kde
 sns.set(color_codes=True)
 
 
@@ -538,6 +539,83 @@ def plot_binary(eq, comp, alpha=None, cdict=None):
             plt.plot(vals_, [Tvec[ii]]*len(vals_),
                      marker='o', markersize=2, alpha=alpha,
                      color=color, linestyle='', mew=0.0)
+
+
+def plot_contour(points, c='k', bw=.3):
+
+    """
+    Plot as set of KDE probability density contours for a set
+    of points, typically corresponding to invariant locations
+
+    Parameters
+    ----------
+    points : numpy array
+        an array of compositions and temperatures representing
+        invariant points or some other phase diagram feature
+    c : color, optional
+        color of the density contours
+    bw : float, optional
+        KDE bandwidth
+
+    Returns
+    -------
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from pduq.invariant_calc import invariant_samples
+    >>> from pduq.uq_plot import plot_contour
+    >>> from pycalphad import Database
+    >>> # load dbf file and raw parameter set.
+    >>> dbf = Database('CU-MG_param_gen.tdb')
+    >>> params = np.loadtxt('trace.csv', delimiter=',')
+    >>> # find the set of invariant points
+    >>> Tv, phv, bndv = invariant_samples(
+    >>>     dbf, params, X=.2, P=101325, Tl=600, Tu=1400,
+    >>>     comp='MG')
+    >>> # define the 'points' array
+    >>> points = np.zeros((len(Tv, 2)))
+    >>> points[:, 0] = bndv[:, 1]
+    >>> points[:, 1] = Tv
+    >>> # plot the contour
+    >>> plt.figure()
+    >>> uq.plot_contour(points)
+    """
+    kernel = gaussian_kde(points.T)
+
+    buf_mult = 1.5
+
+    xmin = points[:, 0].min()
+    xmax = points[:, 0].max()
+    buf = buf_mult*(xmax-xmin)
+    xvec = np.linspace(xmin-buf, xmax+buf, 100)
+
+    ymin = points[:, 1].min()
+    ymax = points[:, 1].max()
+    buf = buf_mult*(ymax-ymin)
+    yvec = np.linspace(ymin-buf, ymax+buf, 100)
+
+    X, Y = np.meshgrid(xvec, yvec)
+    XY = np.vstack([X.ravel(), Y.ravel()])
+
+    kernel = gaussian_kde(points.T, bw_method=bw)
+    pdf = kernel(XY).T
+    Z = pdf.reshape(X.shape)
+
+    order = pdf.argsort()
+    pdf_s = pdf[order]
+    F = np.cumsum(pdf_s)
+    F /= F[-1]
+
+    Plvls = np.array([1-.9545, 1-.6827])
+    boundaries = F.searchsorted(Plvls)
+    lvls = pdf_s[boundaries]
+
+    CS = plt.contour(X, Y, Z, lvls, colors=c, alpha=.7, linestyles=[':', '-'])
+    labels = ["95% CI", "68% CI"]
+
+    for ii in range(len(labels)):
+        CS.collections[ii].set_label(labels[ii])
 
 
 def plot_phasefrac(eq, coordD, phase_label_dict=None, figsize=None):

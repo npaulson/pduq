@@ -11,9 +11,10 @@ PDUQ
    :caption: Contents:
 
    self
-   installation
+   Installation <installation>
+   Examples <examples>
    API Documentation <api>
-   release-history
+   Release History <release-history>
 
 PDUQ, or Phase Diagram Uncertainty Quantification, is a tool
 to quantify the uncertainty of thermochemistry and phase stability
