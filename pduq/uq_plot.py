@@ -760,7 +760,7 @@ def plot_phasereg_prob(eq, phaseregL, title=None, figname=None,
     >>> phaseregL = ['FCC_A1', 'LIQUID']
     >>> # plot the probability of non-zero phase
     >>> # fraction versus composition and temperature
-    >>> # for the phase region in phaseregL 
+    >>> # for the phase region in phaseregL
     >>> # based on the equilibrium calculations in eq
     >>> uq.plot_phasereg_prb(eq, phaseregL)
     """
@@ -943,10 +943,10 @@ def plot_trace(trace, plabelL=None, figsize=None, savefig=False):
     >>> import numpy as np
     >>> import pduq.uq_plot as uq
     >>> trace = np.loadtxt('trace.csv', delimiter=',')
-    >>> plabelL = [r"$^{0}G_{CU \colon MG}^{Laves}$",
-    >>>            r"$^{1}L_{CU \colon MG}^{FCC}$",
-    >>>            ...
-    >>>            r"$^{0}L_{CU \colon MG}^{liquid}$"]
+    >>> plabel = [r"$^{0}G_{CU \\colon MG}^{Laves}$",
+    >>>           r"$^{0}L_{CU \\colon MG}^{FCC}$",
+    >>>           ...
+    >>>           r"$^{0}L_{CU \\colon MG}^{liquid}$"]
     >>> uq.plot_trace(trace, plabelL=plabelL, figsize=[5, 3])
     """
 
