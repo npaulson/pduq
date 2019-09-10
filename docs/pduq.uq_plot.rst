@@ -7,6 +7,7 @@ pduq.uq_plot module
 .. autofunction:: pduq.uq_plot.plot_property
 .. autofunction:: pduq.uq_plot.plot_binary
 .. autofunction:: pduq.uq_plot.plot_contour
+.. autofunction:: pduq.uq_plot.plot_phasefracline
 .. autofunction:: pduq.uq_plot.plot_phasereg_prob
 .. autofunction:: pduq.uq_plot.plot_superimposed
 .. autofunction:: pduq.uq_plot.plot_trace

@@ -44,13 +44,13 @@ Now we load the database file, and load the parameter sets into a
 numpy array with the following shape:
 (# parameter sets, # parameters)
 
-Invariant Calculations
-----------------------
-
 .. code-block:: python
 
     dbf = Database('CU-MG_param_gen.tdb')
     params = np.load('trace.npy')[:, -1, :]
+
+Invariant Calculations
+----------------------
 
 We then set up and run the invariant calculation for all of our
 parameter sets using the `invariant_samples` function from the

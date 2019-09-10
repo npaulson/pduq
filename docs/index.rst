@@ -23,6 +23,9 @@ predictions from the CALPHAD methodology. PDUQ relies on
 prediction and `ESPEI <http://espei.org/en/latest/index.html>`_ for
 Bayesian samples from the posterior CALPHAD parameter distributions.
 
+.. figure:: _static/phase-diagram_superimposed.png
+    :alt: An example of the Cu-Mg phase diagram with quantified uncertainty using PDUQ.
+    :scale: 100%
 
 License
 =======

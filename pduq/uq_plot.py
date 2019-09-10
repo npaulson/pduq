@@ -120,6 +120,7 @@ def get_ticks(eq, cplt):
     """
 
     ticvalall = eq.get(cplt).values  # coordinates along cplt
+
     if cplt == 'T' or cplt == 'P':
         ticvalall = np.round(ticvalall, 0)
     else:
@@ -209,7 +210,7 @@ def plot_dist(eq, coordD, phaseregL, phase, typ, figsize=None):
     plt.figure(figsize=figsize)
     sns.distplot(compL, norm_hist=True)
     xlabeld = {'NP': '%s phase fraction' % phase,
-               'X': r'$\mathrm{x_%s}$' % coordD['component'],
+               'X': r'$\mathrm{x_{%s}}$' % coordD['component'],
                'GM': 'Molar Gibbs energy',
                'MU': 'chemical potential, %s' % coordD['component']}
     plt.xlabel(xlabeld[typ], fontsize='large')
@@ -395,6 +396,7 @@ def plot_property(dbf, comps, phaseL, params, T, prop,
             symmetry = None
             data = get_data(
                 comps, phase, config, symmetry, datasets, prop)
+            print(data)
             for data_s, marker in zip(data, markerL):
                 occupancies = data_s['solver']['sublattice_occupancies']
                 # at the moment this needs to be changed manually
@@ -618,15 +620,72 @@ def plot_contour(points, c='k', bw=.3):
         CS.collections[ii].set_label(labels[ii])
 
 
-def plot_phasefrac(eq, coordD, phase_label_dict=None, figsize=None):
+def plot_phasefracline(eq, coordD, xlabel=None,
+                       phase_label_dict=None, cdict=None, figsize=None):
 
+    """
+    Plot the phase fraction with uncertainty versus composition,
+    temperature or pressure.
+
+    Parameters
+    ----------
+    eq : xarray object
+        Structured equilibirum calculation containing a 'sample'
+        dimension correspoinding to different parameter sets
+    coordD : dict
+        Dictionary defining constraints on the coordinates in
+        eq for plotting the phase fraction with varying X, T or P
+        For example, we might pick a fixed X and let T vary
+        as follows: coordD = {'X_MG':0.1}
+    xlabel : str, optional
+        Label for the x-axis
+    phase_label_dict : dict, optional
+        Dictionary with keys given by phase names and corresponding
+        strings to use in plotting (e.g. to enable LaTeX labels)
+    xlims : list or tuple of float, optional
+        List or tuple with two floats corresponding to the
+        minimum and maximum molar composition of comp
+    cdict : dict, optional
+        Dictionary with phase names and corresponding
+        colors
+    figsize : tuple or list of int or float, optional
+        Plot dimensions in inches
+
+    Returns
+    -------
+
+    Examples
+    --------
+    >>> import pickle
+    >>> import pduq.uq_plot as uq
+    >>> with open('full.pkl', 'rb') as buff:
+    >>>     eq = pickle.load(buff)
+    >>> # if for 'full.pkl' X_MG and T have 100 intervals each
+    >>> # we can fix T and plot the phase fraction versus
+    >>> # X_MG with uncertainty
+    >>> coordD = {'T':1000}
+    >>> # plot phase fraction versus X_MG
+    >>> uq.plot_phasefracline(eq, coordD, xlabel='X_MG')
+    """
     phaseL = list(np.unique(eq.get('Phase').values))
     if '' in phaseL:
         phaseL.remove('')
     nph = len(phaseL)
 
-    Tvec = eq.get('T').values
-    eq_ = eq.sel(coordD)
+    eq = eq.sel(coordD)
+
+    # the X, T or P dimension with the most values
+    # is then plotted on the x-axis
+    rmlist = ['N', 'internal_dof', 'sample', 'vertex']
+    max_sz = 0
+    for dim in list(eq.dims):
+        if dim not in rmlist:
+            dim_sz = eq.dims[dim]
+            if dim_sz > max_sz:
+                max_sz = dim_sz
+                dim_max = dim
+    xvec = eq.get(dim_max).values
+
     CI = 95
     colorL = sns.color_palette("cubehelix", nph)
 
@@ -634,7 +693,7 @@ def plot_phasefrac(eq, coordD, phase_label_dict=None, figsize=None):
 
     for ii in range(nph):
         phase = phaseL[ii]
-        val = eq_.NP.where(eq_.Phase == phase)
+        val = eq.NP.where(eq.Phase == phase)
         val = val.sum(dim='vertex').values.squeeze()
 
         low, mid, high = np.percentile(
@@ -645,22 +704,27 @@ def plot_phasefrac(eq, coordD, phase_label_dict=None, figsize=None):
         else:
             label = phase
 
-        plt.plot(Tvec, mid, linestyle='-', color=colorL[ii], label=label)
-        plt.fill_between(
-            np.atleast_1d(Tvec), low, high, alpha=0.3, facecolor=colorL[ii])
+        if cdict is not None:
+            color = cdict[phaseL[ii]]
+        else:
+            color = colorL[ii]
 
-    plt.xlim([Tvec.min(), Tvec.max()])
+        plt.plot(xvec, mid, linestyle='-', color=color, label=label)
+        plt.fill_between(
+            np.atleast_1d(xvec), low, high, alpha=0.3, facecolor=color)
+
+    plt.xlim([xvec.min(), xvec.max()])
     plt.ylim([-0.01, 1.01])
     plt.xticks(fontsize=12)
     plt.yticks(fontsize=12)
-    plt.xlabel('T (K)', fontsize='large')
+    plt.xlabel(xlabel, fontsize='large')
     plt.ylabel('phase fraction', fontsize='large')
     plt.legend()
     plt.tight_layout()
 
 
 def plot_phasereg_prob(eq, phaseregL, title=None, figname=None,
-                       coordplt=['X', 'T'], typ='contour', figsize=None):
+                       coordplt=['X', 'T'], typ='grayscale', figsize=None):
 
     """
     Plot the probabilty of non-zero phase fraction for a combination of
@@ -730,6 +794,7 @@ def plot_phasereg_prob(eq, phaseregL, title=None, figname=None,
 
     # define ticks and label for x axis
     ticpts, ticvals = get_ticks(eq, coordplt[0])
+
     plt.xticks(ticpts, ticvals)
     plt.xticks(fontsize=12)
     plt.xlabel(r'$\mathrm{x_{Mg}}$', fontsize='14')
