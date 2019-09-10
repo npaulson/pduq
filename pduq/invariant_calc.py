@@ -32,11 +32,11 @@ def invariant_samples(
     Tu : float
         Upper temperature bound to search for the invariants
     comp : str
-        Name of the element
+        Name of the species
     client : Client, optional
         interface to dask.distributed compute cluster
     comps : list, optional
-        Names of components to consider in the calculation
+        Names of species to consider in the calculation
     phases : list or dict, optional
         Names of phases to consider in the calculation
 

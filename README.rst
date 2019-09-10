@@ -12,9 +12,4 @@ PDUQ
 Python package for uncertainty quantification in CALPHAD
 
 * Free software: 3-clause BSD license
-* Documentation: (COMING SOON!) https://npaulson.github.io/pduq.
-
-Features
---------
-
-* TODO
+* Documentation: https://pduq.readthedocs.io/en/latest/ 
