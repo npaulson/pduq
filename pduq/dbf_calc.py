@@ -2,11 +2,12 @@ import logging
 import pickle
 import sympy
 import numpy as np
+import pycalphad.variables as v
 import xarray as xr
 from collections import OrderedDict
 from espei.utils import database_symbols_to_fit
 from itertools import chain
-from pycalphad import equilibrium, variables as v
+from pycalphad import equilibrium  #, variables as v
 from pycalphad.codegen.callables import build_callables
 from pycalphad.core.utils import instantiate_models
 from time import time
@@ -78,7 +79,9 @@ def eq_calc_chunk_(chunk, dbf, comps, phases, conds,
 
         eq_result += [eq_result_]
 
-    logging.info(str(chunk) + ' ' + str(time()))
+    msg = str(chunk) + ' ' + str(time())
+    print(msg)
+    logging.info(msg)
 
     return eq_result
 

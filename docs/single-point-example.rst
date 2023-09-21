@@ -48,7 +48,7 @@ or
 .. code-block:: python
 
     dbf = Database('CU-MG_param_gen.tdb')
-    params = np.load('trace.npy')[:, -5:, :]
+    params = np.load('trace.npy')[:, -5:, :].reshape((150*5, 15))
 
 Equilibrium Calculations
 ------------------------
@@ -67,7 +67,7 @@ equilibria.
 
     # perform the equilibrium calculation for all parameter
     # sets
-    eqC = eq_calc_samples(dbf, conds, params, client=client)
+    eq = eq_calc_samples(dbf, conds, params, client=client)
 
 
 Data Analysis and Plotting
@@ -106,6 +106,10 @@ phase fraction:
 
 .. code-block:: python
 
+    coordD = {'T':1003, 'X_MG':.214, 'component':'MG'}
+    phaseregL = ['FCC_A1', 'LAVES_C15']
+    phase = 'FCC_A1'    
+    
     # plot the phase fraction
     uq.plot_dist(eq, coordD, phaseregL, phase, typ='NP', figsize=(5, 3))
 
