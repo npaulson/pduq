@@ -62,3 +62,18 @@ resulting in the following figure
 .. figure:: _static/phase-fraction_1000K.png
     :alt: Phase fractions versus X_Mg with uncertainty at T=1000K
     :scale: 100%
+
+On first glance, this figure looks fairly odd - for example there are large
+uncertainties in the liquid phase fraction at 0.2 molar fraction Mg. The
+reason for this interesting behavior becomes more clear when looking at
+the entire Cu-Mg phase diagram with uncertainty in the previous :ref:`example <whole-phase-diagram>`.
+From the phase diagram it is clear that the invariant is close to 1000K
+and X_Mg = 0.2, leading to uncertainty in the phase fraction of the liquid,
+FCC and Laves phases.
+
+Looking even more closely, it is odd that the mean phase fraction for the
+liquid phase is zero when the uncertainty is so broad. This is because
+for almost all parameter sets at 1000K and X_Mg ~ 0.2, the invariant
+is at a higher temperature leading to a 0 phase fraction of liquid. For
+parameter sets with a lower invariant, however, the liquid phase fraction
+at around 0.2 molar fraction Mg is 1.

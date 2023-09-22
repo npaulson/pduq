@@ -3,7 +3,7 @@ from pycalphad import calculate
 import numpy as np
 import seaborn as sns
 import xarray as xr
-from espei.core_utils import get_data
+# from espei.core_utils import get_data
 from espei.utils import database_symbols_to_fit
 from collections import OrderedDict
 from scipy.stats import gaussian_kde
