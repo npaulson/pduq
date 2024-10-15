@@ -339,9 +339,27 @@ def get_config_from_root(root):
     # configparser.NoOptionError (if it lacks "VCS="). See the docstring at
     # the top of versioneer.py for instructions on writing your setup.cfg .
     setup_cfg = os.path.join(root, "setup.cfg")
-    parser = configparser.SafeConfigParser()
+    # Try importing the appropriate ConfigParser depending on Python version
+    if sys.version_info[0] == 2:
+        import ConfigParser as configparser  # Python 2
+    else:
+        import configparser  # Python 3
+
+    # Define the minimum version that supports 'read_file'
+    min_version = (3, 2)
+
+    if sys.version_info >= min_version:
+        parser = configparser.ConfigParser()
+    else:
+        # SafeConfigParser is not needed in Python 3+, and ConfigParser works fine in Python 2.
+        parser = configparser.SafeConfigParser() if sys.version_info[0] == 2 else configparser.ConfigParser()
+
+    # Use 'read_file()' for Python 3.2+ and 'readfp()' for older versions and Python 2
     with open(setup_cfg, "r") as f:
-        parser.readfp(f)
+        if sys.version_info >= min_version:
+            parser.read_file(f)  # Python 3.2+
+        else:
+            parser.readfp(f)  # Python 2 and older Python 3 versions
     VCS = parser.get("versioneer", "VCS")  # mandatory
 
     def get(parser, name):
