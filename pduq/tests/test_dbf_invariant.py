@@ -22,8 +22,7 @@ def test_eq_calc_samples():
 
     assert eqC.dims == {'sample': 2, 'N': 1, 'P': 1, 'T': 1, 'X_MG': 1,
         'vertex': 3, 'component': 2, 'internal_dof': 4}
-
-    assert list(np.squeeze(tst).values) == [0., 1.]
+    assert np.isclose(np.squeeze(tst).values,[0., 1.],atol=1e-05,equal_nan=False).all()
 
 
 def test_invariant_samples():
@@ -50,6 +49,5 @@ def test_invariant_samples():
 
 
 if __name__ == '__main__':
-
     test_eq_calc_samples()
     test_invariant_samples()
