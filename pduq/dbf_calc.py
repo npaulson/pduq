@@ -28,7 +28,7 @@ def eq_calc_(dbf, comps, phases, conds,
         eq_result = equilibrium(dbf, comps, phases, conds,
                                 parameters=parameters)
     else:
-        print(eq_callables)
+    
         eq_result = equilibrium(dbf, comps, phases, conds,
                             parameters=parameters, callables=eq_callables)
 
