@@ -187,7 +187,7 @@ def plot_dist(eq, coordD, phaseregL, phase, typ, figsize=None):
     """
 
     compL = np.array([])  # array to collect property of interest
-    for ii in range(eq.dims['sample']):
+    for ii in range(eq.sizes['sample']):
         # eq_: equilibrium object for sample ii
         eq_ = eq.sel({'sample': ii}).sel(coordD)
 
@@ -208,7 +208,7 @@ def plot_dist(eq, coordD, phaseregL, phase, typ, figsize=None):
             compL = np.append(compL, val)
 
     plt.figure(figsize=figsize)
-    sns.distplot(compL, norm_hist=True)
+    sns.histplot(compL, stat='density', kde=True)
     xlabeld = {'NP': '%s phase fraction' % phase,
                'X': r'$\mathrm{x_{%s}}$' % coordD['component'],
                'GM': 'Molar Gibbs energy',
@@ -680,7 +680,7 @@ def plot_phasefracline(eq, coordD, xlabel=None,
     max_sz = 0
     for dim in list(eq.dims):
         if dim not in rmlist:
-            dim_sz = eq.dims[dim]
+            dim_sz = eq.sizes[dim]
             if dim_sz > max_sz:
                 max_sz = dim_sz
                 dim_max = dim

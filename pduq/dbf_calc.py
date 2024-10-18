@@ -8,7 +8,7 @@ from collections import OrderedDict
 from espei.utils import database_symbols_to_fit
 from itertools import chain
 from pycalphad import equilibrium  #, variables as v
-from pycalphad.codegen.callables import build_callables
+#from pycalphad.codegen.callables import build_callables
 from pycalphad.core.utils import instantiate_models
 from time import time
 logging.basicConfig(filename='pduq.log', level=logging.INFO)
@@ -23,7 +23,13 @@ def eq_calc_(dbf, comps, phases, conds,
 
     parameters = OrderedDict(sorted(param_dict.items(), key=str))
 
-    eq_result = equilibrium(dbf, comps, phases, conds,
+    if eq_callables == None:
+        
+        eq_result = equilibrium(dbf, comps, phases, conds,
+                                parameters=parameters)
+    else:
+        print(eq_callables)
+        eq_result = equilibrium(dbf, comps, phases, conds,
                             parameters=parameters, callables=eq_callables)
 
     return eq_result
@@ -188,23 +194,24 @@ def eq_calc_samples(
 
     return eqC
 
+## build_callables deprecated in Pycalphad
+# def get_eq_callables_(dbf, comps, phases, symbols_to_fit):
 
-def get_eq_callables_(dbf, comps, phases, symbols_to_fit):
+#     for x in symbols_to_fit:
+#         if isinstance(dbf.symbols[x], sympy.Piecewise):
+#             dbf.symbols[x] = dbf.symbols[x].args[0].expr
 
-    for x in symbols_to_fit:
-        if isinstance(dbf.symbols[x], sympy.Piecewise):
-            dbf.symbols[x] = dbf.symbols[x].args[0].expr
+#     models = instantiate_models(
+#         dbf, comps, phases,
+#         parameters=dict(zip(symbols_to_fit, [0]*len(symbols_to_fit))))
 
-    models = instantiate_models(
-        dbf, comps, phases,
-        parameters=dict(zip(symbols_to_fit, [0]*len(symbols_to_fit))))
+    
+#     eq_callables = build_callables(
+#         dbf, comps, phases, models,
+#         parameter_symbols=symbols_to_fit,
+#         build_gradients=True, build_hessians=False,
+#         additional_statevars={v.N, v.P, v.T})
+    
+#     logging.info('callables have been created')
 
-    eq_callables = build_callables(
-        dbf, comps, phases, models,
-        parameter_symbols=symbols_to_fit,
-        build_gradients=True, build_hessians=False,
-        additional_statevars={v.N, v.P, v.T})
-
-    logging.info('callables have been created')
-
-    return eq_callables
+#     return eq_callables
