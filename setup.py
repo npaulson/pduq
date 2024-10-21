@@ -38,10 +38,10 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     description="Python package for uncertainty quantification in CALPHAD",
-    long_description=readme,
+    #long_description=readme,
     author="Argonne National Laboratory",
-    author_email='npaulson@anl.gov',
-    url='https://github.com/npaulson/pduq',
+    author_email='tguannan@anl.gov',
+    url='https://github.com/npaulson/pduq/tree/GT_fix_ver',
     python_requires='>={}'.format('.'.join(str(n) for n in min_version)),
     packages=find_packages(exclude=['docs', 'tests']),
     entry_points={
