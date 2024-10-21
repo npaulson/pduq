@@ -38,7 +38,8 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     description="Python package for uncertainty quantification in CALPHAD",
-    #long_description=readme,
+    long_description=open('README.rst').read(),  # Point to README.rst
+    long_description_content_type='text/x-rst',  # Specify ReStructuredText content type
     author="Argonne National Laboratory",
     author_email='tguannan@anl.gov',
     url='https://github.com/npaulson/pduq/tree/GT_fix_ver',
