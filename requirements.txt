@@ -1,6 +1,6 @@
 # List required packages in this file, one per line.
 pycalphad
-espei
 numpy
-seaborn
 scipy
+seaborn
+espei

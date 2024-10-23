@@ -60,6 +60,7 @@ setup(
             'pduq/tests/CU-MG_param_gen.tdb'
             ]
         },
+    python_requires='<3.13',
     install_requires=parse_requirements('requirements.txt'),
     license="BSD (3-clause)",
     classifiers=[
