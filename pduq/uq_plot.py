@@ -7,7 +7,8 @@ import xarray as xr
 from espei.utils import database_symbols_to_fit
 from collections import OrderedDict
 from scipy.stats import gaussian_kde
-sns.set(color_codes=True)
+
+sns.set_theme(color_codes=True)
 
 
 def get_label(cplt):
