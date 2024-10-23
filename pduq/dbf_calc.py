@@ -1,6 +1,6 @@
 import logging
 import pickle
-import sympy
+#import sympy
 import numpy as np
 import pycalphad.variables as v
 import xarray as xr

@@ -27,10 +27,10 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.rst'), encoding='utf-8') as readme_file:
     readme = readme_file.read()
 
-with open(path.join(here, 'requirements.txt')) as requirements_file:
-    # Parse requirements.txt, ignoring any commented-out lines.
-    requirements = [line for line in requirements_file.read().splitlines()
-                    if not line.startswith('#')]
+def parse_requirements(filename):
+    with open(filename, 'r') as file:
+        return [line.strip() for line in file if line and not line.startswith('#')]
+
 
 
 setup(
@@ -60,7 +60,7 @@ setup(
             'pduq/tests/CU-MG_param_gen.tdb'
             ]
         },
-    install_requires=requirements,
+    install_requires=parse_requirements('requirements.txt'),
     license="BSD (3-clause)",
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
