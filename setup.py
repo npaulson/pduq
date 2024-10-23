@@ -43,7 +43,7 @@ setup(
     author="Argonne National Laboratory",
     author_email='tguannan@anl.gov',
     url='https://github.com/npaulson/pduq/tree/GT_fix_ver',
-    python_requires='>={}'.format('.'.join(str(n) for n in min_version)),
+    python_requires='>={}'.format('.'.join(str(n) for n in min_version)) + ',<3.13',
     packages=find_packages(exclude=['docs', 'tests']),
     entry_points={
         'console_scripts': [
@@ -60,7 +60,6 @@ setup(
             'pduq/tests/CU-MG_param_gen.tdb'
             ]
         },
-    python_requires='<3.13',
     install_requires=parse_requirements('requirements.txt'),
     license="BSD (3-clause)",
     classifiers=[
