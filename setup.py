@@ -65,6 +65,7 @@ setup(
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Natural Language :: English',
+        'License :: OSI Approved :: BSD License',
         'Programming Language :: Python :: 3',
     ],
 )
