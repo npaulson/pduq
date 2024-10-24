@@ -5,7 +5,7 @@ import numpy as np
 import pycalphad.variables as v
 import xarray as xr
 from collections import OrderedDict
-from espei.utils import database_symbols_to_fit
+from .utils import database_symbols_to_fit
 from itertools import chain
 from pycalphad import equilibrium  #, variables as v
 #from pycalphad.codegen.callables import build_callables

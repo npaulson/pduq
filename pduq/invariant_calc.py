@@ -1,7 +1,7 @@
 import logging
 import numpy as np
 from .dbf_calc import eq_calc_  # , get_eq_callables_
-from espei.utils import database_symbols_to_fit
+from .utils import database_symbols_to_fit
 from pycalphad import variables as v
 logging.basicConfig(filename='pduq.log', level=logging.INFO)
 

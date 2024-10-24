@@ -1,6 +1,6 @@
 # List required packages in this file, one per line.
-pycalphad
-numpy
-scipy
-seaborn
-espei
+pycalphad == 0.11.0
+numpy == 2.1.2
+scipy == 1.14.1
+seaborn == 0.13.2
+
