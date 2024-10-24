@@ -1,5 +1,6 @@
 # List required packages in this file, one per line.
+numpy>=1.13
 pycalphad
 scipy
 seaborn
-dask
+dask[complete]>=2
