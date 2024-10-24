@@ -3,3 +3,4 @@ pycalphad
 numpy
 scipy
 seaborn
+dask
