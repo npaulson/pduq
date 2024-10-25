@@ -27,11 +27,6 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.rst'), encoding='utf-8') as readme_file:
     readme = readme_file.read()
 
-def parse_requirements(filename):
-    with open(filename, 'r') as file:
-        return [line.strip() for line in file if line and not line.startswith('#')]
-
-
 
 setup(
     name='pduq',
@@ -61,7 +56,7 @@ setup(
             ]
         },
     install_requires=[
-        'dask[complete]>=2',
+        'dask>=2',
         'pycalphad>=0.11.0',
         'numpy>=1.20',
         'scipy',
