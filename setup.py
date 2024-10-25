@@ -36,7 +36,10 @@ setup(
     long_description=open('README.rst').read(),  # Point to README.rst
     long_description_content_type='text/x-rst',  # Specify ReStructuredText content type
     author="Argonne National Laboratory",
-    author_email='tguannan@anl.gov',
+    author_email=(
+        'Guannan Tang <tguannan@anl.gov>, '
+        'Noah Paulson <npaulson@anl.gov>, '
+    ),
     url='https://github.com/npaulson/pduq/tree/GT_fix_ver',
     python_requires='>={}'.format('.'.join(str(n) for n in min_version)) + ',<3.13',
     packages=find_packages(exclude=['docs', 'tests']),
