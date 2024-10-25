@@ -60,13 +60,13 @@ setup(
             'pduq/tests/CU-MG_param_gen.tdb'
             ]
         },
-    install_requires={
+    install_requires=[
         'dask[complete]>=2',
         'pycalphad>=0.11.0',
         'numpy>=1.20',
         'scipy',
         'seaborn',
-    },
+    ],
     license="BSD (3-clause)",
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
