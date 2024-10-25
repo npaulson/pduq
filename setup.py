@@ -59,7 +59,8 @@ setup(
             ]
         },
     install_requires=[
-        'dask>=2',
+        'dask[complete]>=2',
+        'distributed',
         'pycalphad>=0.11.0',
         'numpy>=1.20',
         'scipy',
