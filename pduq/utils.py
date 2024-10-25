@@ -3,6 +3,7 @@ Utilities for PDUQ
 
 Classes and functions defined here should have some reuse potential.
 """
+import re
 
 def database_symbols_to_fit(dbf, symbol_regex="^V[V]?([0-9]+)$"):
     """
