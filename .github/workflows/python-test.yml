@@ -36,8 +36,8 @@ jobs:
 
     - name: Run tests for test_dask.py
       run: |
-        PYTHONPATH=. pytest /pduq/tests/test_dask.py
+        PYTHONPATH=. pytest tests/test_dask.py
 
     - name: Run tests for test_invariant_.py
       run: |
-        PYTHONPATH=. pytest pduq/tests/test_invariant_.py
+        PYTHONPATH=. pytest tests/test_invariant_.py
