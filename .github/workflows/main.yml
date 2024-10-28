@@ -1,0 +1,40 @@
+name: Python Test
+
+on:
+  push:
+    branches:
+      - main 
+      - GT_fix_ver
+  pull_request:
+    branches:
+      - main
+      - GT_fix_ver
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11',"3.12"]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install package from local repository
+      run: |
+        python -m pip install --upgrade pip
+        pip install .
+
+    - name: Run tests for dask_example.py
+      run: |
+        PYTHONPATH=. pytest pduq/tests/test_dask_example.py
+
+    - name: Run tests for test_dbf_invariant.py
+      run: |
+        PYTHONPATH=. pytest pduq/tests/test_invariant_.py
