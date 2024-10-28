@@ -33,8 +33,8 @@ jobs:
 
     - name: Run tests for dask_example.py
       run: |
-        pytest pduq/tests/test_dask_example.py
+        PYTHONPATH=. pytest pduq/pduq/tests/test_dask.py
 
     - name: Run tests for test_dbf_invariant.py
       run: |
-        pytest pduq/tests/test_invariant_.py
+        PYTHONPATH=. pytest pduq/pduq/tests/test_dask.py
