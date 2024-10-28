@@ -11,8 +11,8 @@ PDUQ
 .. .. image:: https://img.shields.io/pypi/status/pduq
 ..     :alt: PyPI - Status 
 
-.. .. image:: https://img.shields.io/pypi/l/pduq
-..     :alt: PyPI - License 
+.. image:: https://img.shields.io/pypi/l/pduq
+    :alt: PyPI - License 
 
 .. image:: https://img.shields.io/pypi/v/pduq.svg
     :target: https://pypi.python.org/pypi/pduq 
