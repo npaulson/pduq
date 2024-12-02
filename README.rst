@@ -18,10 +18,6 @@ PDUQ
         :target: https://pypi.python.org/pypi/pduq 
         :alt: PyPI - Version
 
-.. image:: https://img.shields.io/travis/npaulson/pduq.svg
-        :target: https://travis-ci.org/npaulson/pduq 
-        :alt: Travis CI - Build Status
-
 .. image:: https://img.shields.io/pypi/l/pduq
         :target: https://pypi.python.org/pypi/pduq
         :alt: PyPI - License 
