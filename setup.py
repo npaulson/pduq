@@ -27,22 +27,21 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.rst'), encoding='utf-8') as readme_file:
     readme = readme_file.read()
 
-with open(path.join(here, 'requirements.txt')) as requirements_file:
-    # Parse requirements.txt, ignoring any commented-out lines.
-    requirements = [line for line in requirements_file.read().splitlines()
-                    if not line.startswith('#')]
-
 
 setup(
     name='pduq',
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     description="Python package for uncertainty quantification in CALPHAD",
-    long_description=readme,
+    long_description=open('README.rst').read(),  # Point to README.rst
+    long_description_content_type='text/x-rst',  # Specify ReStructuredText content type
     author="Argonne National Laboratory",
-    author_email='npaulson@anl.gov',
-    url='https://github.com/npaulson/pduq',
-    python_requires='>={}'.format('.'.join(str(n) for n in min_version)),
+    author_email=(
+        'Guannan Tang <tguannan@anl.gov>, '
+        'Noah Paulson <npaulson@anl.gov>, '
+    ),
+    url='https://github.com/npaulson/pduq/tree/GT_fix_ver',
+    python_requires='>={}'.format('.'.join(str(n) for n in min_version)) + ',<3.13',
     packages=find_packages(exclude=['docs', 'tests']),
     entry_points={
         'console_scripts': [
@@ -59,11 +58,23 @@ setup(
             'pduq/tests/CU-MG_param_gen.tdb'
             ]
         },
-    install_requires=requirements,
+    install_requires=[
+        'dask[complete]>=2',
+        'distributed',
+        'pycalphad>=0.11.0',
+        'numpy>=1.20',
+        'scipy',
+        'seaborn',
+    ],
     license="BSD (3-clause)",
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Natural Language :: English',
+        'License :: OSI Approved :: BSD License',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
     ],
 )

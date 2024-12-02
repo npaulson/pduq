@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11',"3.12"]
+        python-version: ['3', '3.9', '3.10', '3.11',"3.12"]
 
     steps:
     - name: Checkout code
@@ -31,10 +31,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install .
 
-    - name: Run tests for dask_example.py
+    - name: Run tests for test_dask.py
       run: |
-        PYTHONPATH=. pytest pduq/tests/test_dask_example.py
+        PYTHONPATH=. pytest ./pduq/tests/test_dask.py
 
-    - name: Run tests for test_dbf_invariant.py
+    - name: Run tests for test_invariant_.py
       run: |
-        PYTHONPATH=. pytest pduq/tests/test_invariant_.py
+        PYTHONPATH=. pytest ./pduq/tests/test_invariant_.py
